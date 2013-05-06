@@ -2,7 +2,8 @@
 
 import Tkinter as tk
 import menu_bar
-import importWindow as iw
+import importWindow as iw#
+import connector
 
 class ETLManager():
     
@@ -14,6 +15,9 @@ class ETLManager():
     def b_import(self):
         imp = iw.import_window(self)
         self.append_to_log("import selected")
+        
+    def connect(self):
+        connex = connector.create_connection(self)
     
     def initialize(self):
         self.main_win = tk.Tk()
@@ -27,7 +31,7 @@ class ETLManager():
         
         ## Other stuff
         self.import_button = tk.Button(self.main_win, text="Import...", command = self.b_import, height = 5, width=15)
-        self.im_schedule_button = tk.Button(self.main_win, text="Import Schedule...", command = self.b_import, height = 5, width=15)
+        self.im_schedule_button = tk.Button(self.main_win, text="Import Schedule...", command = self.connect, height = 5, width=15)
         self.report_button = tk.Button(self.main_win, text="Reporting...", command = self.b_import, height = 5, width=15)
         
         self.online_button = tk.Button(self.main_win, text="Internet...", command = self.b_import, height = 5, width=15)
