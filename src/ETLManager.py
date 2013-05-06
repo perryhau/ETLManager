@@ -2,7 +2,7 @@
 
 import Tkinter as tk
 import menu_bar
-import importWindow as iw#
+import importWindow as iw
 import connector
 
 class ETLManager():
