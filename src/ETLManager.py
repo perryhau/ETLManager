@@ -1,9 +1,9 @@
 #! /usr/bin/env python
 
 import Tkinter as tk
-import menu_bar
+import menuBar
 import importWindow as iw
-import connector
+import connector 
 
 class ETLManager():
     
@@ -26,7 +26,7 @@ class ETLManager():
         
         ## Menu Bar
         mb = tk.Menu(self.main_win)
-        menu_bar.ret_menu_bar(mb)
+        menuBar.ret_menu_bar(mb)
         self.main_win.config(menu = mb)
         
         ## Other stuff
