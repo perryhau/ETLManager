@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<content name="##ETL Manager Settings File##">
+       <dest_db_connection name="##Server Name##">
+           <connection>##Address##</connection>
+           <port>##PORT##</port>
+           <db-name>##Default Schema##</db-name>
+           <username>##User##</username>
+           <password>##Password##</password>
+       </dest_db_connection> 
+</content>

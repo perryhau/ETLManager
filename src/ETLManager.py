@@ -3,7 +3,8 @@
 import Tkinter as tk
 import menuBar
 import importWindow as iw
-import connector 
+import settingsParser as sp
+#import connector 
 
 class ETLManager():
     
@@ -17,7 +18,9 @@ class ETLManager():
         self.append_to_log("import selected")
         
     def connect(self):
-        connex = connector.create_connection(self)
+        #connex = connector.create_connection(self)
+        spar = sp.settings_parser()
+        spar.initialize("test")
     
     def initialize(self):
         self.main_win = tk.Tk()
