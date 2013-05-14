@@ -11,6 +11,7 @@ class settings_parser():
         doc_root = xml_settings.getroot()
         
         for child in doc_root.findall('dest_db_connection'):
+            self.settings['type'] = child.get('server_type')
             self.settings['name'] = child.get('name')
             self.settings['connection'] = child.find('connection').text
             self.settings['port'] = child.find('port').text
@@ -18,12 +19,12 @@ class settings_parser():
             self.settings['user'] = child.find('username').text
             self.settings['password'] =child.find('password').text
             
-            print self.settings['name']
-            print self.settings['connection']
-            print self.settings['port']
-            print self.settings['db_name']
-            print self.settings['user']
-            print self.settings['password']
+            #print self.settings['name']
+            #print self.settings['connection']
+            #print self.settings['port']
+            #print self.settings['db_name']
+            #print self.settings['user']
+            #print self.settings['password']
             
             return self.settings
     
