@@ -9,7 +9,7 @@ class FileReader:
         self.file1 = filename
         #print filename
         
-    def discover_delimiter(self):
+    def discover_delimiter(self, start_line = 0):
         foundDel = ''
         max_dels = {'comma':0, 'tab':0, 'pipe':0, 'semi':0}
         num_lines = 0
@@ -27,27 +27,34 @@ class FileReader:
         lines = fo.readlines()
         
         for i in range(num_lines):
-            arr = lines[i].split(',')
-            if max_dels['comma'] < len(arr):
-                max_dels['comma'] = len(arr)
+            if i + start_line < num_lines:
+                arr = lines[i + start_line].split(',')
+                if max_dels['comma'] < len(arr):
+                    max_dels['comma'] = len(arr)
         
         for i in range(num_lines):
-            arr = lines[i].split('\t')
-            if max_dels['tab'] < len(arr):
-                max_dels['tab'] = len(arr)
+            if i + start_line < num_lines:
+                arr = lines[i + start_line].split('\t')
+                if max_dels['tab'] < len(arr):
+                    max_dels['tab'] = len(arr)
                 
         for i in range(num_lines):
-            arr = lines[i].split('|')
-            if max_dels['pipe'] < len(arr):
-                max_dels['pipe'] = len(arr)
+            if i + start_line < num_lines:
+                arr = lines[i + start_line].split('|')
+                if max_dels['pipe'] < len(arr):
+                    max_dels['pipe'] = len(arr)
         
         for i in range(num_lines):
-            arr = lines[i].split(';')
-            if max_dels['semi'] < len(arr):
-                max_dels['semi'] = len(arr)
+            if i + start_line < num_lines:
+                arr = lines[i + start_line].split(';')
+                if max_dels['semi'] < len(arr):
+                    max_dels['semi'] = len(arr)
         
         foundDel = max(max_dels, key=max_dels.get)
-        print foundDel
+        fo.close()
+        
+        print "found delimiter: " + foundDel
+        return foundDel
 
     def readTextFile (self):
         fo = open(self.file1, 'r', 1)
@@ -59,15 +66,23 @@ class FileReader:
         fo.close()
         return l
     
-    def readTextToArray (self, delimit):
+    def readTextToArrayList (self, delimit, start_line = 0):
+        
+        trans = { 'semi':';', 'pipe':'|', 'tab':'\t', 'comma':','}
+        
         fo = open(self.file1, 'r', 1)
         arr = []
         
-        for line in fo.readlines():
-            line = line.rstrip()
-            if len(line) > 0:
-                arr.append(line.split(delimit))
-            
+        lines = fo.readlines()
+        
+        for l in range(len(lines)):
+            if l + start_line < len(lines):
+                line = lines[l + start_line].strip()
+                arr0 = line.split(trans[delimit])
+                arr1 = []
+                for el in arr0:
+                    arr1.append(el.strip())
+                arr.append(arr1)
         fo.close()
         return arr
     

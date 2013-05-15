@@ -9,3 +9,9 @@ class db_connection():
         print "DB Connected"
         
         self.cursor = self.con.cursor ()
+        
+        
+    
+    def close(self):
+        self.cursor.close()
+        self.con.close()
