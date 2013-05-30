@@ -1,6 +1,5 @@
 import MySQLdb as mdb  
 
-
 class db_connection():
     
     def __init__(self, parent, db_host, db_user, db_passwd, db_schema):
