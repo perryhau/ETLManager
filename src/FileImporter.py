@@ -8,10 +8,10 @@ from datetime import datetime
 
 class importFile():
     
-    def __init__(self, settings_file = "../chris_home.xml", inc_header = True, start_line = 0, file_del = "auto"):
+    def __init__(self, file_name, tbl_name, settings_file = "../chris_home.xml", inc_header = True, start_line = 0, file_del = "auto"):
         if (file_name == None or tbl_name == None):
             print "Must declare at least file to import. Start with -f FILE_NAME. Better luck next time!"
-        else:    
+        else:
             s = settings_parser()
             settings = s.initialize(settings_file)
         
@@ -21,7 +21,7 @@ class importFile():
                 print "not recognised connection type"
         
             if file_del <> "excel" and file_del <> "xml":
-                fr = FileReader("../testImportFile.txt")
+                fr = FileReader(file_name)
                 
                 if file_del == "auto":
                     file_del = fr.discover_delimiter(starting_line = start_line)
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     start_line = 0
     quote_char = ""
     settings_file = "../default.xml"
-    file_name = None
+    file_name = "../testImportFile.txt"
     
     date_time = datetime.now()
     dtm = datetime.strftime(date_time, "%Y%m%d_%H%M%S")
@@ -83,5 +83,7 @@ if __name__ == "__main__":
     start_line = args.sl
     tbl_name = args.tn
     quote_char = args.qc
+    file_name = args.f
+    settings_file = args.set
     
-    app = importFile()
+    app = importFile(file_name, tbl_name)
