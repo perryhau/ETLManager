@@ -26,21 +26,14 @@ class importFile():
                 if file_del == "auto":
                     file_del = fr.discover_delimiter(starting_line = start_line)
             
-                if file_del == "comma" :
-                    delimit = ","
-                if file_del == "tab":
-                    delimit = "\t"
-                if file_del == "semi":
-                    delimit = ";"
-                if file_del == "pipe":
-                    delimit = "|"
-            
                 if inc_header == True :
                     header_line = start_line
-                    header = fr.get_line(header_line, delimit)
+                    header = fr.get_line(header_line, file_del)
                     print header
                     for el in header:
-                        print el.strip()
+                        print el
+                
+                fr.readTextToArrayList(file_del)
                         
                 ## create table if needed
                 ### understand columns

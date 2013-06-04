@@ -12,13 +12,17 @@ class FileReader:
         #print filename
         
     def get_line(self, line, delimit):
+        trans = { 'semi':';', 'pipe':'|', 'tab':'\t', 'comma':','}
+        
         fo = open(self.file1, 'r', 1)
         lines = fo.readlines()
-        arr = lines[line].strip().split(delimit)
-        return arr
+        arr = lines[line].split(trans[delimit])
+        arr0 = []
+        for el in arr:
+            arr0.append(el.strip())
+        return arr0
     
     def discover_delimiter(self, starting_line = 0):
-        foundDel = ''
         max_dels = {'comma':0, 'tab':0, 'pipe':0, 'semi':0}
         num_lines = 0
         
@@ -29,7 +33,7 @@ class FileReader:
                     num_lines += 1
                 t += 1
                 
-        if num_lines > 500:
+        if num_lines - starting_line > 500:
             num_lines = 500
         
         fo = open(self.file1, 'r', 1)
@@ -74,18 +78,27 @@ class FileReader:
         fo.close()
         return l
     
-    def readTextToArrayList (self, delimit, start_line = 0):
+    def readTextToArrayList (self, delimit, start_line = 0, quote_char = None):
         
         trans = { 'semi':';', 'pipe':'|', 'tab':'\t', 'comma':','}
         
         fo = open(self.file1, 'r', 1)
+        
+        csv_read = csv.reader(fo)
+        
+        for line in csv_read:
+            print line
+            print len(line)
+            for el in line:
+                print el
+        
         arr = []
         
         lines = fo.readlines()
         
         for l in range(len(lines)):
             if l + start_line < len(lines):
-                line = lines[l + start_line].strip()
+                line = lines[l + start_line]
                 arr0 = line.split(trans[delimit])
                 arr1 = []
                 for el in arr0:
