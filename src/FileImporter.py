@@ -5,10 +5,11 @@ from settingsParser import settings_parser
 from connector import db_connection
 from FileReader import FileReader
 from datetime import datetime
+from createTable import table_creator
 
 class importFile():
     
-    def __init__(self, file_name, tbl_name, tbl_type, settings_file = "../chris_home.xml", inc_header = False, start_line = 8, file_del = "auto"):
+    def __init__(self, file_name, tbl_name, tbl_type, settings_file = "../chris_home.xml", inc_header = False, start_line = 0, file_del = "auto"):
         if (file_name == None or tbl_name == None):
             print "Must declare at least file to import. Start with -f FILE_NAME. Better luck next time!"
         else:
@@ -36,105 +37,51 @@ class importFile():
                     content = fr.readTextToArrayList(file_del, st_line = start_line)
                 
                 
-                # Only when headers:
-                if inc_header == True : 
-                    ## determine if all columns have a header
-                    max_cols = len(header)
-                    for i in content:
-                        ileng = len(i)
-                        if ileng > max_cols:
-                            max_cols = ileng
-                            
-                    ## add col_headers if not enough
-                    if max_cols > len(header):
-                        difference = max_cols - len(header)
-                        for i in range(difference):
-                            header.append("column_header_" + str(i))
                 
                 # create table if needed
                 if tbl_type == "new":
-                    if inc_header == False :
-                        header = []
-                        max_cols = 0
-                        for i in content:
-                            ileng = len(i)
-                            if ileng > max_cols:
-                                max_cols = ileng
-                        for i in range(max_cols):
-                            header.append("column_header_" + str(i))
+                    if inc_header == True:
+                        tbl_cr = table_creator(content, tbl_name, header = header)
+                    else:
+                        tbl_cr = table_creator(content, tbl_name)
                     
-                    #print header
-
-                    ### understand columns (Best int, then float last string)
-                    col_datatype = {}
-                    for t in range(len(header)):
-                        col_datatype[t] = "int"
-                    #print col_datatype
-                    
-                    for i in content:
-                        n = 0
-                        for t in i:
-                            max_str_len = "strm_" + str(n)
-                            
-                            try:
-                                a = col_datatype[max_str_len]
-                            except KeyError, e:
-                                col_datatype[max_str_len] = 0
-                            
-                            try:
-                                t = int(t)
-                            except ValueError:
-                                #do nothing
-                                print "No int",
-                            if type(t) != type(int()):
-                                try:
-                                    t = float(t)
-                                except ValueError:
-                                    #do nothing
-                                    print "No float",
-                            
-                            print type(t)
-                            
-                            if (type(t)==type(bool()) and (col_datatype[max_str_len] < 10 or col_datatype[max_str_len] == None)):
-                                col_datatype[n] = "varchar"
-                                col_datatype[max_str_len] = 10
-                                
-                            if ((type(t)==type(int())) or (type(t)==type(long()))) and col_datatype[n] != 'varchar' and col_datatype[n] != "float":
-                                if (t >= 2000000000) or (t <= -2000000000):
-                                    col_datatype[n] = "float"
-                                else:
-                                    col_datatype[n] = "int"
-                            
-                            if type(t)==type(float()) and col_datatype[n] != 'varchar':
-                                col_datatype[n] = "float"
-                            
-                            if type(t)==type(str()):
-                                col_datatype[n] = "varchar"
-                                if (col_datatype[max_str_len] < len(t)) or col_datatype[max_str_len] == None:
-                                    col_datatype[max_str_len] = len(t) + 100
-                            
-                            n += 1
-                    
-                    ### Try building a create table statement:
-                    
-                    stmt_cr = "create table " + tbl_name + " ("
-                    i = 0
-                    for col in header:
-                        max_str_len = "strm_" + str(i)
-                        stmt_cr += " " + col + " " + col_datatype[i]
-                        if col_datatype[i] == "varchar":
-                            stmt_cr += "(" + str(col_datatype[max_str_len]) + ")" 
-                        if i+1 < len(header):
-                            stmt_cr += "," 
-                        i += 1
-                    stmt_cr += ");"
-                    
-                    print stmt_cr
-                    
+                    new_tbl_stmt = tbl_cr.return_newTableStmt()
+                    db_conn.run_query(new_tbl_stmt)
+                    print "table %s created!" % tbl_name
+                
+                    header = tbl_cr.return_header()
+                
                 ## try inserting the lines
+                for line in content:
+                    
+                    ### prepare the insert statement for the line
+                    i = 0
+                    ins_stmt = "insert into " + tbl_name + " ("
+                    for t in range(len(line)):
+                        ins_stmt += header[t]
+                        if t+1 < len(line):
+                            ins_stmt += ", "
+                    ins_stmt += ") values ("
+                    for el in line:
+                        el = str(el)
+                        ins_stmt += " '" + el.replace('\'', "\'") + "'"
+                        if i+1 < len(line):
+                            ins_stmt += ", "
+                        i += 1
+                    ins_stmt += ")"
+                    
+                    ### insert the line:
+                    #print ins_stmt
+                    try:
+                        db_conn.run_query(ins_stmt)
+                    except:
+                        print "This didn't work:\n " + ins_stmt
                 
                 ## logging the import job
-                
+            
+            #closing the db:
+            if db_conn:
+                db_conn.close()    
     
 if __name__ == "__main__":
     

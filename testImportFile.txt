@@ -6,7 +6,7 @@ Only One
 Two;Items
 Here is, another, strange, "example, that", i'd, like to, trial, hello
 
-1, 2, 3, 4, test
-1, 2, 3.3, 4, 5
-1, 2, 3, 4.4, 5
-1, 2.2, 4, 4, Help
+1	2	3	4	test
+1	2	3.3	4	5
+1	2	3	4.4	5
+1	2.2	4	4	Help

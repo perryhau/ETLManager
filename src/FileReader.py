@@ -84,7 +84,7 @@ class FileReader:
         
         fo = open(self.file1, 'r', 1)
         
-        csv_read = csv.reader(fo, quotechar=quote_char, skipinitialspace=True)
+        csv_read = csv.reader(fo, quotechar=quote_char, skipinitialspace=True, delimiter = trans[delimit])
         
         arr = []
         i = 0
