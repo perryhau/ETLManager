@@ -12,7 +12,6 @@ class table_creator() :
         return self.new_table
     
     def __init__(self, array, tbl_name, header = None):
-        # Only when headers:
         if header != None : 
             ##check if all columns have a header
             max_cols = len(header)

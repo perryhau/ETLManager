@@ -78,18 +78,19 @@ class FileReader:
         fo.close()
         return l
     
-    def readTextToArrayList (self, delimit, st_line = 0, quote_char = '"'):
+    def readTextToArrayList (self, delimit, st_line = 0, quote_char = '"', last_line = None, skip_end_lines = 0):
         
         trans = { 'semi':';', 'pipe':'|', 'tab':'\t', 'comma':','}
         
         fo = open(self.file1, 'r', 1)
         
         csv_read = csv.reader(fo, quotechar=quote_char, skipinitialspace=True, delimiter = trans[delimit])
-        
+        rows = list(csv_read)
         arr = []
         i = 0
-        for line in csv_read:
-            if i >= st_line:
+        length_of_file = len(rows)
+        for line in rows:
+            if i >= st_line and (i<= last_line or last_line == None) and i+skip_end_lines < length_of_file:
                 arr1 = []
                 for el in line:
                     arr1.append(el.strip())

@@ -21,5 +21,6 @@ class db_connection():
         print "Db connection closed"
         
     def run_query(self, query):
+        #print query
         self.cursor.execute(query)
         self.con.commit()

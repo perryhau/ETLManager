@@ -9,7 +9,7 @@ from createTable import table_creator
 
 class importFile():
     
-    def __init__(self, file_name, tbl_name, tbl_type, settings_file = "../chris_home.xml", inc_header = False, start_line = 0, file_del = "auto"):
+    def __init__(self, file_name, tbl_name, tbl_type, settings_file = "../chris_home.xml", inc_header = False, start_line = 0, file_del = "auto", end_line = None, skip_last = 1):
         if (file_name == None or tbl_name == None):
             print "Must declare at least file to import. Start with -f FILE_NAME. Better luck next time!"
         else:
@@ -30,12 +30,18 @@ class importFile():
                 if inc_header == True :
                     header_line = start_line
                     header = fr.get_line(header_line, file_del)
+                    arr = []
+                    for el in header:
+                        st01 = el.replace(" ", "_")
+                        arr.append(st01)
+                    header = arr
                 
                 if inc_header == True : 
-                    content = fr.readTextToArrayList(file_del, st_line = start_line+1)
+                    content = fr.readTextToArrayList(file_del, st_line = start_line+1, skip_end_lines = skip_last)
                 else:
-                    content = fr.readTextToArrayList(file_del, st_line = start_line)
-                
+                    content = fr.readTextToArrayList(file_del, st_line = start_line, skip_end_lines = skip_last)
+
+                #print content
                 
                 
                 # create table if needed
@@ -46,7 +52,9 @@ class importFile():
                         tbl_cr = table_creator(content, tbl_name)
                     
                     new_tbl_stmt = tbl_cr.return_newTableStmt()
-                    db_conn.run_query(new_tbl_stmt)
+                    #print new_tbl_stmt
+                    db_conn.cursor.execute(new_tbl_stmt)
+                    db_conn.con.commit()
                     print "table %s created!" % tbl_name
                 
                     header = tbl_cr.return_header()
@@ -63,20 +71,22 @@ class importFile():
                             ins_stmt += ", "
                     ins_stmt += ") values ("
                     for el in line:
-                        el = str(el)
-                        ins_stmt += " '" + el.replace('\'', "\'") + "'"
+                        ins_stmt += " %s"
                         if i+1 < len(line):
                             ins_stmt += ", "
                         i += 1
                     ins_stmt += ")"
                     
                     ### insert the line:
-                    #print ins_stmt
                     try:
-                        db_conn.run_query(ins_stmt)
+                        #print ins_stmt
+                        #print list(line)
+                        db_conn.cursor.execute(ins_stmt, list(line))
+                        db_conn.con.commit()
+                        pass
                     except:
-                        print "This didn't work:\n " + ins_stmt
-                
+                        print "This didn't work"
+                                        
                 ## logging the import job
             
             #closing the db:
